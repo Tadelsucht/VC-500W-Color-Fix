@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brother VC-500W Printer Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        input[type="text"], input[type="file"], select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input[type="file"] {
+            padding: 8px;
+        }
+        select {
+            height: 45px;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .slider-container {
+            display: grid;
+            grid-template-columns: 1fr 60px;
+            gap: 10px;
+            align-items: center;
+        }
+        .slider-value {
+            text-align: center;
+            font-weight: bold;
+            background-color: #f8f9fa;
+            padding: 5px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        button.secondary {
+            background-color: #95a5a6;
+            margin-bottom: 10px;
+        }
+        button.secondary:hover {
+            background-color: #7f8c8d;
+        }
+        button.small {
+            padding: 8px 16px;
+            font-size: 14px;
+            width: auto;
+            margin-left: 10px;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .preview-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .preview-section {
+            text-align: center;
+        }
+        .preview-section h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+            font-size: 14px;
+        }
+        .preview-section img {
+            max-width: 100%;
+            max-height: 200px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .color-adjustments {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        .color-adjustments h3 {
+            margin-top: 0;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 10px;
+        }
+        .cmyk-sliders {
+            display: grid;
+            gap: 15px;
+        }
+        .slider-group {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .color-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
+        .cyan { background-color: #00ffff; }
+        .magenta { background-color: #ff00ff; }
+        .yellow { background-color: #ffff00; }
+        .key { background-color: #000000; }
+        
+        /* Paper Level Indicator */
+        .paper-status {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        .paper-status h3 {
+            margin-top: 0;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .paper-level-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .paper-level-bar {
+            flex: 1;
+            height: 30px;
+            background-color: #e9ecef;
+            border-radius: 15px;
+            border: 2px solid #dee2e6;
+            overflow: hidden;
+            position: relative;
+        }
+        .paper-level-fill {
+            height: 100%;
+            border-radius: 13px;
+            transition: width 0.5s ease, background-color 0.3s ease;
+            background: linear-gradient(90deg, #e74c3c 0%, #f39c12 50%, #27ae60 100%);
+            position: relative;
+        }
+        .paper-level-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 14px;
+            z-index: 10;
+            text-shadow: 0 0 3px rgba(255,255,255,0.8);
+        }
+        .paper-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            font-size: 14px;
+        }
+        .paper-info-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            text-align: center;
+        }
+        .paper-info-item strong {
+            display: block;
+            color: #495057;
+        }
+        .refresh-status {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+            margin-top: 10px;
+            width: auto;
+        }
+        .refresh-status:hover {
+            background-color: #5a6268;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+        .status-indicator.online { background-color: #28a745; }
+        .status-indicator.offline { background-color: #dc3545; }
+        .status-indicator.unknown { background-color: #6c757d; }
+        
+        /* Settings Mode Toggle */
+        .settings-mode-toggle {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .toggle-checkbox {
+            display: none;
+        }
+        
+        .toggle-slider {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background-color: #3498db;
+            border-radius: 15px;
+            transition: background-color 0.3s;
+        }
+        
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        
+        .toggle-checkbox:checked + .toggle-slider {
+            background-color: #e67e22;
+        }
+        
+        .toggle-checkbox:checked + .toggle-slider::before {
+            transform: translateX(30px);
+        }
+        
+        .toggle-description {
+            margin: 8px 0 0 0;
+            font-size: 14px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .zink-mode .color-adjustments {
+            background: linear-gradient(135deg, #fff3cd 0%, #fef9e7 100%);
+            border: 2px solid #e67e22;
+        }
+        
+        .zink-mode .color-adjustments h3 {
+            color: #e67e22;
+        }
+        
+        @media (max-width: 700px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            .preview-container {
+                grid-template-columns: 1fr;
+            }
+            .paper-level-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .paper-info {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖨️ Brother VC-500W Printer Interface</h1>
+        
+        <div class="paper-status">
+            <h3>
+                📄 Paper Level
+                <span id="statusIndicator" class="status-indicator unknown"></span>
+            </h3>
+            <div class="paper-level-container">
+                <div class="paper-level-bar">
+                    <div id="paperLevelFill" class="paper-level-fill" style="width: 0%;">
+                        <div id="paperLevelText" class="paper-level-text">Unknown</div>
+                    </div>
+                </div>
+            </div>
+            <div class="paper-info">
+                <div class="paper-info-item">
+                    <strong>Type</strong>
+                    <span id="tapeType">Unknown</span>
+                </div>
+                <div class="paper-info-item">
+                    <strong>Remaining</strong>
+                    <span id="remainingPaper">-- mm</span>
+                </div>
+                <div class="paper-info-item">
+                    <strong>Total</strong>
+                    <span id="totalPaper">-- mm</span>
+                </div>
+                <div class="paper-info-item">
+                    <strong>Printer Status</strong>
+                    <span id="printerState">Unknown</span>
+                </div>
+            </div>
+            <button type="button" id="refreshStatus" class="refresh-status">🔄 Refresh Status</button>
+        </div>
+        
+        <form id="printForm">
+            <div class="form-group">
+                <label for="printerIp">Printer IP Address:</label>
+                <input type="text" id="printerIp" placeholder="e.g. 192.168.178.101">
+            </div>
+            
+            <div class="form-group">
+                <label for="imageFile">Select Image:</label>
+                <input type="file" id="imageFile" accept="image/*" required>
+                <div id="previewContainer" class="preview-container" style="display: none;">
+                    <div class="preview-section">
+                        <h4>📸 Original</h4>
+                        <img id="originalPreview" alt="Original">
+                    </div>
+                    <div class="preview-section">
+                        <h4>🎨 With CMYK+ Adjustments</h4>
+                        <img id="adjustedPreview" alt="Adjusted">
+                    </div>
+                    <div class="preview-section">
+                        <h4>📄 Expected ZINK Paper Preview</h4>
+                        <img id="zinkPreview" alt="ZINK Preview">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="color-adjustments">
+                <h3>🎨 CMYK Color Adjustments</h3>
+                
+                <!-- Settings Mode Toggle -->
+                <div class="settings-mode-toggle">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="zinkModeToggle" class="toggle-checkbox">
+                        <span class="toggle-slider"></span>
+                        <span id="toggleModeText">🎨 CMYK+ Settings</span>
+                    </label>
+                    <p class="toggle-description" id="toggleDescription">
+                        Adjust color settings for printing
+                    </p>
+                </div>
+                
+                <div class="cmyk-sliders">
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>🔵 Cyan</span>
+                            <span id="cyanValue" class="slider-value">0</span>
+                        </div>
+                        <input type="range" id="cyanSlider" min="-100" max="100" value="0" class="slider">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>🟣 Magenta</span>
+                            <span id="magentaValue" class="slider-value">0</span>
+                        </div>
+                        <input type="range" id="magentaSlider" min="-100" max="100" value="0" class="slider">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>🟡 Yellow</span>
+                            <span id="yellowValue" class="slider-value">0</span>
+                        </div>
+                        <input type="range" id="yellowSlider" min="-100" max="100" value="0" class="slider">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>⚫ Key (Black)</span>
+                            <span id="keyValue" class="slider-value">0</span>
+                        </div>
+                        <input type="range" id="keySlider" min="-100" max="100" value="0" class="slider">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>🌑 Black Level</span>
+                            <span id="blackLevelValue" class="slider-value">0</span>
+                        </div>
+                        <input type="range" id="blackLevelSlider" min="-100" max="100" value="0" class="slider">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>☀️ Exposure</span>
+                            <span id="exposureValue" class="slider-value">0</span>
+                        </div>
+                        <input type="range" id="exposureSlider" min="-100" max="100" value="0" class="slider">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>🔆 Contrast</span>
+                            <span id="contrastValue" class="slider-value">0</span>
+                        </div>
+                        <input type="range" id="contrastSlider" min="-100" max="100" value="0" class="slider">
+                    </div>
+                </div>
+                
+                <button type="button" id="resetColors" class="secondary">🔄 Reset Colors</button>
+            </div>
+            
+            <div class="settings-grid">
+                <div class="form-group">
+                    <label for="printMode">Print Mode:</label>
+                    <select id="printMode">
+                        <option value="vivid">Vivid (Vibrant Colors)</option>
+                        <option value="normal">Normal</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cutMode">Cut Mode:</label>
+                    <select id="cutMode">
+                        <option value="full">Full Cut</option>
+                        <option value="half">Half Cut</option>
+                        <option value="none">No Cut</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" id="printButton">🖨️ Print</button>
+        </form>
+        
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('printForm');
+        const imageFile = document.getElementById('imageFile');
+        const previewContainer = document.getElementById('previewContainer');
+        const originalPreview = document.getElementById('originalPreview');
+        const adjustedPreview = document.getElementById('adjustedPreview');
+        const zinkPreview = document.getElementById('zinkPreview');
+        const printButton = document.getElementById('printButton');
+        const status = document.getElementById('status');
+        const resetColors = document.getElementById('resetColors');
+        const refreshStatus = document.getElementById('refreshStatus');
+        const printerIp = document.getElementById('printerIp');
+
+        // Paper status elements
+        const paperLevelFill = document.getElementById('paperLevelFill');
+        const paperLevelText = document.getElementById('paperLevelText');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const tapeType = document.getElementById('tapeType');
+        const remainingPaper = document.getElementById('remainingPaper');
+        const totalPaper = document.getElementById('totalPaper');
+        const printerState = document.getElementById('printerState');
+
+        // Color sliders
+        const cyanSlider = document.getElementById('cyanSlider');
+        const magentaSlider = document.getElementById('magentaSlider');
+        const yellowSlider = document.getElementById('yellowSlider');
+        const keySlider = document.getElementById('keySlider');
+        const blackLevelSlider = document.getElementById('blackLevelSlider');
+        const exposureSlider = document.getElementById('exposureSlider');
+        const contrastSlider = document.getElementById('contrastSlider');
+
+        // Color value displays
+        const cyanValue = document.getElementById('cyanValue');
+        const magentaValue = document.getElementById('magentaValue');
+        const yellowValue = document.getElementById('yellowValue');
+        const keyValue = document.getElementById('keyValue');
+        const blackLevelValue = document.getElementById('blackLevelValue');
+        const exposureValue = document.getElementById('exposureValue');
+        const contrastValue = document.getElementById('contrastValue');
+
+        // Store original image for processing
+        let originalImageFile = null;
+        let statusUpdateInterval = null;
+
+        // ZINK mode toggle elements
+        const zinkModeToggle = document.getElementById('zinkModeToggle');
+        const toggleModeText = document.getElementById('toggleModeText');
+        const toggleDescription = document.getElementById('toggleDescription');
+        
+        // Track current mode
+        let isZinkMode = false;
+
+        // Settings management with localStorage (works better than cookies for local files)
+        function saveSetting(name, value) {
+            try {
+                localStorage.setItem('vc500w_' + name, value);
+                console.log(`Setting saved: ${name} = ${value}`);
+            } catch (error) {
+                console.error('Failed to save setting:', name, error);
+            }
+        }
+
+        function getSetting(name) {
+            try {
+                const value = localStorage.getItem('vc500w_' + name);
+                console.log(`Setting loaded: ${name} = ${value}`);
+                return value;
+            } catch (error) {
+                console.error('Failed to load setting:', name, error);
+                return null;
+            }
+        }
+
+        // Save settings to localStorage
+        function saveSettings() {
+            console.log('Saving all settings...');
+            saveSetting('printer_ip', printerIp.value);
+            saveSetting('print_mode', document.getElementById('printMode').value);
+            saveSetting('cut_mode', document.getElementById('cutMode').value);
+            saveSetting('zink_mode', isZinkMode.toString());
+            
+            // Save current slider values to appropriate mode
+            const prefix = isZinkMode ? 'zink_' : 'normal_';
+            saveSetting(prefix + 'cyan_value', cyanSlider.value);
+            saveSetting(prefix + 'magenta_value', magentaSlider.value);
+            saveSetting(prefix + 'yellow_value', yellowSlider.value);
+            saveSetting(prefix + 'key_value', keySlider.value);
+            saveSetting(prefix + 'black_level', blackLevelSlider.value);
+            saveSetting(prefix + 'exposure', exposureSlider.value);
+            saveSetting(prefix + 'contrast', contrastSlider.value);
+        }
+
+        // Load settings from localStorage
+        function loadSettings() {
+            console.log('Loading all settings...');
+            
+            const printerIpValue = getSetting('printer_ip');
+            if (printerIpValue) {
+                printerIp.value = printerIpValue;
+            }
+
+            const printMode = getSetting('print_mode');
+            if (printMode) document.getElementById('printMode').value = printMode;
+
+            const cutMode = getSetting('cut_mode');
+            if (cutMode) document.getElementById('cutMode').value = cutMode;
+
+            const zinkMode = getSetting('zink_mode');
+            if (zinkMode) {
+                isZinkMode = zinkMode === 'true';
+                zinkModeToggle.checked = isZinkMode;
+                toggleModeText.textContent = isZinkMode ? '📄 ZINK Paper Preview Settings' : '🎨 CMYK+ Settings';
+                toggleDescription.textContent = isZinkMode ? 
+                    'Adjust color settings specifically for ZINK paper preview' : 
+                    'Adjust color settings for printing';
+                
+                if (isZinkMode) {
+                    document.body.classList.add('zink-mode');
+                } else {
+                    document.body.classList.remove('zink-mode');
+                }
+            }
+
+            // Load settings for current mode
+            loadModeSettings();
+            
+            console.log('Settings loaded successfully');
+        }
+
+        // Load settings for current mode
+        function loadModeSettings() {
+            console.log(`Loading settings for ${isZinkMode ? 'ZINK' : 'normal'} mode...`);
+            const prefix = isZinkMode ? 'zink_' : 'normal_';
+            
+            const cyanVal = getSetting(prefix + 'cyan_value');
+            if (cyanVal !== null) {
+                cyanSlider.value = cyanVal;
+            } else if (isZinkMode) {
+                // Set default ZINK values
+                cyanSlider.value = 20;
+                magentaSlider.value = 10;
+                yellowSlider.value = -20;
+                keySlider.value = 10;
+                blackLevelSlider.value = -10;
+                exposureSlider.value = 10;
+                contrastSlider.value = 0;
+            } else {
+                // Reset to defaults for normal mode
+                cyanSlider.value = 0;
+                magentaSlider.value = 0;
+                yellowSlider.value = 0;
+                keySlider.value = 0;
+                blackLevelSlider.value = 0;
+                exposureSlider.value = 0;
+                contrastSlider.value = 0;
+            }
+
+            const magentaVal = getSetting(prefix + 'magenta_value');
+            if (magentaVal !== null) magentaSlider.value = magentaVal;
+
+            const yellowVal = getSetting(prefix + 'yellow_value');
+            if (yellowVal !== null) yellowSlider.value = yellowVal;
+
+            const keyVal = getSetting(prefix + 'key_value');
+            if (keyVal !== null) keySlider.value = keyVal;
+
+            const blackLevelVal = getSetting(prefix + 'black_level');
+            if (blackLevelVal !== null) blackLevelSlider.value = blackLevelVal;
+
+            const exposureVal = getSetting(prefix + 'exposure');
+            if (exposureVal !== null) exposureSlider.value = exposureVal;
+
+            const contrastVal = getSetting(prefix + 'contrast');
+            if (contrastVal !== null) contrastSlider.value = contrastVal;
+            
+            updateSliderValues();
+            updatePreview();
+        }
+
+        // Switch between normal and ZINK mode
+        function switchMode(newZinkMode) {
+            // Save current settings before switching
+            saveSettings();
+            
+            // Update mode
+            isZinkMode = newZinkMode;
+            zinkModeToggle.checked = isZinkMode;
+            
+            // Update UI
+            toggleModeText.textContent = isZinkMode ? '📄 ZINK Paper Preview Settings' : '🎨 CMYK+ Settings';
+            toggleDescription.textContent = isZinkMode ? 
+                'Adjust color settings specifically for ZINK paper preview' : 
+                'Adjust color settings for printing';
+            
+            // Update body class for styling
+            if (isZinkMode) {
+                document.body.classList.add('zink-mode');
+            } else {
+                document.body.classList.remove('zink-mode');
+            }
+            
+            // Load settings for new mode
+            loadModeSettings();
+            
+            // Save new mode state
+            saveSetting('zink_mode', isZinkMode.toString());
+        }
+
+        // Update paper status display
+        function updatePaperStatus(data) {
+            if (data.success && data.tape.present) {
+                const percentage = data.tape.percentage;
+                
+                // Update progress bar
+                paperLevelFill.style.width = percentage + '%';
+                paperLevelText.textContent = percentage + '%';
+                
+                // Update color based on level
+                if (percentage > 50) {
+                    paperLevelFill.style.background = '#27ae60'; // Green
+                } else if (percentage > 20) {
+                    paperLevelFill.style.background = '#f39c12'; // Orange
+                } else {
+                    paperLevelFill.style.background = '#e74c3c'; // Red
+                }
+                
+                // Update info fields
+                tapeType.textContent = data.tape.type_mm + 'mm Label Tape';
+                remainingPaper.textContent = data.tape.remaining_mm + ' mm';
+                totalPaper.textContent = data.tape.total_mm + ' mm';
+                printerState.textContent = data.printer.state;
+                
+                // Update status indicator
+                statusIndicator.className = 'status-indicator online';
+                
+            } else if (data.success && !data.tape.present) {
+                // No tape inserted
+                paperLevelFill.style.width = '0%';
+                paperLevelText.textContent = 'No Tape';
+                paperLevelFill.style.background = '#6c757d'; // Gray
+                
+                tapeType.textContent = 'No tape inserted';
+                remainingPaper.textContent = '-- mm';
+                totalPaper.textContent = '-- mm';
+                printerState.textContent = data.printer ? data.printer.state : 'Unknown';
+                
+                statusIndicator.className = 'status-indicator online';
+                
+            } else {
+                // Error or offline
+                paperLevelFill.style.width = '0%';
+                paperLevelText.textContent = 'Offline';
+                paperLevelFill.style.background = '#dc3545'; // Red
+                
+                tapeType.textContent = 'Printer not reachable';
+                remainingPaper.textContent = '-- mm';
+                totalPaper.textContent = '-- mm';
+                printerState.textContent = 'Offline';
+                
+                statusIndicator.className = 'status-indicator offline';
+            }
+        }
+
+        // Fetch printer status
+        async function fetchPrinterStatus() {
+            try {
+                const printerIpValue = printerIp.value;
+                if (!printerIpValue) return;
+                
+                const response = await fetch(`http://localhost:8080/printer-status?ip=${encodeURIComponent(printerIpValue)}`);
+                const data = await response.json();
+                updatePaperStatus(data);
+            } catch (error) {
+                console.error('Status fetch error:', error);
+                updatePaperStatus({ success: false });
+            }
+        }
+
+        // Start automatic status updates
+        function startStatusUpdates() {
+            fetchPrinterStatus(); // Initial fetch
+            if (statusUpdateInterval) {
+                clearInterval(statusUpdateInterval);
+            }
+            statusUpdateInterval = setInterval(fetchPrinterStatus, 10000); // Update every 10 seconds
+        }
+
+        // Stop automatic status updates
+        function stopStatusUpdates() {
+            if (statusUpdateInterval) {
+                clearInterval(statusUpdateInterval);
+                statusUpdateInterval = null;
+            }
+        }
+
+        // Event listeners
+        refreshStatus.addEventListener('click', fetchPrinterStatus);
+
+        // Update status when printer IP changes
+        printerIp.addEventListener('change', function() {
+            saveSettings();
+            fetchPrinterStatus();
+        });
+
+        // ZINK mode toggle event listener
+        zinkModeToggle.addEventListener('change', function() {
+            switchMode(this.checked);
+        });
+
+        // Update slider value displays
+        function updateSliderValues() {
+            cyanValue.textContent = cyanSlider.value;
+            magentaValue.textContent = magentaSlider.value;
+            yellowValue.textContent = yellowSlider.value;
+            keyValue.textContent = keySlider.value;
+            blackLevelValue.textContent = blackLevelSlider.value;
+            exposureValue.textContent = exposureSlider.value;
+            contrastValue.textContent = contrastSlider.value;
+        }
+
+        // Update preview when sliders change
+        function updatePreview() {
+            if (originalImageFile) {
+                updateAdjustedPreview();
+            }
+        }
+
+        // Add event listeners to sliders
+        cyanSlider.addEventListener('input', function() {
+            updateSliderValues();
+            updatePreview();
+            saveSettings();
+        });
+        magentaSlider.addEventListener('input', function() {
+            updateSliderValues();
+            updatePreview();
+            saveSettings();
+        });
+        yellowSlider.addEventListener('input', function() {
+            updateSliderValues();
+            updatePreview();
+            saveSettings();
+        });
+        keySlider.addEventListener('input', function() {
+            updateSliderValues();
+            updatePreview();
+            saveSettings();
+        });
+        blackLevelSlider.addEventListener('input', function() {
+            updateSliderValues();
+            updatePreview();
+            saveSettings();
+        });
+        exposureSlider.addEventListener('input', function() {
+            updateSliderValues();
+            updatePreview();
+            saveSettings();
+        });
+        contrastSlider.addEventListener('input', function() {
+            updateSliderValues();
+            updatePreview();
+            saveSettings();
+        });
+
+        // Reset colors button
+        resetColors.addEventListener('click', function() {
+            cyanSlider.value = 0;
+            magentaSlider.value = 0;
+            yellowSlider.value = 0;
+            keySlider.value = 0;
+            blackLevelSlider.value = 0;
+            exposureSlider.value = 0;
+            contrastSlider.value = 0;
+            updateSliderValues();
+            updatePreview();
+            saveSettings();
+        });
+
+        // Save settings when dropdowns change
+        document.getElementById('printMode').addEventListener('change', saveSettings);
+        document.getElementById('cutMode').addEventListener('change', saveSettings);
+
+        // Initialize slider values
+        updateSliderValues();
+
+        // Image preview functionality
+        imageFile.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                originalImageFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Show simple preview
+                    previewContainer.style.display = 'grid';
+                    
+                    // Show original in preview container
+                    originalPreview.src = e.target.result;
+                    
+                    // Update adjusted preview
+                    updateAdjustedPreview();
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
+                originalImageFile = null;
+            }
+        });
+
+        // Update adjusted preview
+        function updateAdjustedPreview() {
+            if (!originalImageFile) return;
+
+            // Always use normal CMYK+ settings for the "With CMYK+ Adjustments" preview
+            const normalPrefix = 'normal_';
+            const normalCmykAdjustments = {
+                cyan: parseInt(getSetting(normalPrefix + 'cyan_value') || '0'),
+                magenta: parseInt(getSetting(normalPrefix + 'magenta_value') || '0'),
+                yellow: parseInt(getSetting(normalPrefix + 'yellow_value') || '0'),
+                key: parseInt(getSetting(normalPrefix + 'key_value') || '0'),
+                blackLevel: parseInt(getSetting(normalPrefix + 'black_level') || '0'),
+                exposure: parseInt(getSetting(normalPrefix + 'exposure') || '0'),
+                contrast: parseInt(getSetting(normalPrefix + 'contrast') || '0')
+            };
+
+            // If we're in normal mode, use current slider values for normal adjustments
+            if (!isZinkMode) {
+                normalCmykAdjustments.cyan = parseInt(cyanSlider.value);
+                normalCmykAdjustments.magenta = parseInt(magentaSlider.value);
+                normalCmykAdjustments.yellow = parseInt(yellowSlider.value);
+                normalCmykAdjustments.key = parseInt(keySlider.value);
+                normalCmykAdjustments.blackLevel = parseInt(blackLevelSlider.value);
+                normalCmykAdjustments.exposure = parseInt(exposureSlider.value);
+                normalCmykAdjustments.contrast = parseInt(contrastSlider.value);
+            }
+
+            // Check if any normal adjustments are applied
+            const hasNormalAdjustments = normalCmykAdjustments.cyan !== 0 || normalCmykAdjustments.magenta !== 0 || 
+                                       normalCmykAdjustments.yellow !== 0 || normalCmykAdjustments.key !== 0 || 
+                                       normalCmykAdjustments.blackLevel !== 0 || normalCmykAdjustments.exposure !== 0 || 
+                                       normalCmykAdjustments.contrast !== 0;
+
+            if (!hasNormalAdjustments) {
+                // No normal adjustments, show original for adjusted preview
+                adjustedPreview.src = originalPreview.src;
+            } else {
+                // Apply normal CMYK+ adjustments for "With CMYK+ Adjustments" preview
+                applyCMYKAdjustmentsToCanvas(
+                    originalImageFile,
+                    normalCmykAdjustments.cyan,
+                    normalCmykAdjustments.magenta,
+                    normalCmykAdjustments.yellow,
+                    normalCmykAdjustments.key,
+                    normalCmykAdjustments.blackLevel,
+                    normalCmykAdjustments.exposure,
+                    normalCmykAdjustments.contrast
+                ).then(canvas => {
+                    adjustedPreview.src = canvas.toDataURL('image/jpeg', 0.9);
+                }).catch(error => {
+                    console.error('Adjusted preview error:', error);
+                    adjustedPreview.src = originalPreview.src;
+                });
+            }
+
+            // For ZINK preview - apply ZINK adjustments to the already CMYK+ adjusted image
+            const zinkOnlyAdjustments = isZinkMode ? {
+                cyan: parseInt(cyanSlider.value),
+                magenta: parseInt(magentaSlider.value),
+                yellow: parseInt(yellowSlider.value),
+                key: parseInt(keySlider.value),
+                blackLevel: parseInt(blackLevelSlider.value),
+                exposure: parseInt(exposureSlider.value),
+                contrast: parseInt(contrastSlider.value)
+            } : {
+                cyan: parseInt(getSetting('zink_cyan_value') || '20'),
+                magenta: parseInt(getSetting('zink_magenta_value') || '10'),
+                yellow: parseInt(getSetting('zink_yellow_value') || '-20'),
+                key: parseInt(getSetting('zink_key_value') || '10'),
+                blackLevel: parseInt(getSetting('zink_black_level') || '-10'),
+                exposure: parseInt(getSetting('zink_exposure') || '10'),
+                contrast: parseInt(getSetting('zink_contrast') || '0')
+            };
+
+            // Step 1: Apply normal CMYK+ adjustments to original image
+            if (!hasNormalAdjustments) {
+                // No normal adjustments, apply ZINK adjustments directly to original
+                applyCMYKAdjustmentsToCanvas(
+                    originalImageFile,
+                    zinkOnlyAdjustments.cyan,
+                    zinkOnlyAdjustments.magenta,
+                    zinkOnlyAdjustments.yellow,
+                    zinkOnlyAdjustments.key,
+                    zinkOnlyAdjustments.blackLevel,
+                    zinkOnlyAdjustments.exposure,
+                    zinkOnlyAdjustments.contrast
+                ).then(canvas => {
+                    zinkPreview.src = canvas.toDataURL('image/jpeg', 0.9);
+                }).catch(error => {
+                    console.error('ZINK preview error:', error);
+                    zinkPreview.src = originalPreview.src;
+                });
+            } else {
+                // Step 1: Apply normal CMYK+ adjustments first
+                applyCMYKAdjustmentsToCanvas(
+                    originalImageFile,
+                    normalCmykAdjustments.cyan,
+                    normalCmykAdjustments.magenta,
+                    normalCmykAdjustments.yellow,
+                    normalCmykAdjustments.key,
+                    normalCmykAdjustments.blackLevel,
+                    normalCmykAdjustments.exposure,
+                    normalCmykAdjustments.contrast
+                ).then(intermediateCanvas => {
+                    // Step 2: Convert intermediate canvas to image file-like object
+                    return new Promise((resolve, reject) => {
+                        intermediateCanvas.toBlob(resolve, 'image/jpeg', 0.9);
+                    });
+                }).then(intermediateBlob => {
+                    // Step 3: Apply ZINK adjustments to the already-adjusted image
+                    const intermediateFile = new File([intermediateBlob], 'intermediate.jpg', { type: 'image/jpeg' });
+                    return applyCMYKAdjustmentsToCanvas(
+                        intermediateFile,
+                        zinkOnlyAdjustments.cyan,
+                        zinkOnlyAdjustments.magenta,
+                        zinkOnlyAdjustments.yellow,
+                        zinkOnlyAdjustments.key,
+                        zinkOnlyAdjustments.blackLevel,
+                        zinkOnlyAdjustments.exposure,
+                        zinkOnlyAdjustments.contrast
+                    );
+                }).then(finalCanvas => {
+                    zinkPreview.src = finalCanvas.toDataURL('image/jpeg', 0.9);
+                }).catch(error => {
+                    console.error('ZINK preview error:', error);
+                    zinkPreview.src = originalPreview.src;
+                });
+            }
+        }
+
+        // Show status message
+        function showStatus(message, type) {
+            status.className = `status ${type}`;
+            status.textContent = message;
+            status.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // Apply CMYK+ Adjustments to canvas (for preview)
+        function applyCMYKAdjustmentsToCanvas(file, cyan, magenta, yellow, key, blackLevel, exposure, contrast) {
+            return new Promise((resolve, reject) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+
+                img.onload = function() {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Get image data
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = imageData.data;
+                    
+                    // Apply CMYK+ Adjustments
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = data[i];
+                        const g = data[i + 1];
+                        const b = data[i + 2];
+                        
+                        // Convert RGB to CMYK
+                        const k = Math.min(1 - r/255, 1 - g/255, 1 - b/255);
+                        let c = (1 - r/255 - k) / (1 - k) || 0;
+                        let m = (1 - g/255 - k) / (1 - k) || 0;
+                        let y = (1 - b/255 - k) / (1 - k) || 0;
+                        
+                        // Apply adjustments
+                        c = Math.max(0, Math.min(1, c + cyan/100));
+                        m = Math.max(0, Math.min(1, m + magenta/100));
+                        y = Math.max(0, Math.min(1, y + yellow/100));
+                        const adjustedK = Math.max(0, Math.min(1, k + key/100));
+                        
+                        // Convert back to RGB
+                        let newR = 255 * (1 - c) * (1 - adjustedK);
+                        let newG = 255 * (1 - m) * (1 - adjustedK);
+                        let newB = 255 * (1 - y) * (1 - adjustedK);
+                        
+                        // Apply exposure and black level adjustments
+                        const exposureFactor = exposure / 100; // -100..+100 to -1..+1
+                        newR = newR + (255 * exposureFactor);
+                        newG = newG + (255 * exposureFactor);
+                        newB = newB + (255 * exposureFactor);
+                        
+                        // Apply black level (adjust shadows)
+                        const blackLevelFactor = blackLevel / 100; // -100..+100 to -1..+1
+                        if (blackLevelFactor > 0) {
+                            // Lift shadows
+                            newR = newR + (blackLevelFactor * (255 - newR) * (1 - newR/255));
+                            newG = newG + (blackLevelFactor * (255 - newG) * (1 - newG/255));
+                            newB = newB + (blackLevelFactor * (255 - newB) * (1 - newB/255));
+                        } else {
+                            // Lower shadows  
+                            newR = newR + (blackLevelFactor * newR);
+                            newG = newG + (blackLevelFactor * newG);
+                            newB = newB + (blackLevelFactor * newB);
+                        }
+                        
+                        // Apply contrast after all other adjustments
+                        const contrastFactor = (contrast + 100) / 100; // Convert -100..+100 to 0..2
+                        newR = ((newR - 128) * contrastFactor) + 128;
+                        newG = ((newG - 128) * contrastFactor) + 128;
+                        newB = ((newB - 128) * contrastFactor) + 128;
+                        
+                        data[i] = Math.round(Math.max(0, Math.min(255, newR)));
+                        data[i + 1] = Math.round(Math.max(0, Math.min(255, newG)));
+                        data[i + 2] = Math.round(Math.max(0, Math.min(255, newB)));
+                    }
+                    
+                    // Put the adjusted image data back
+                    ctx.putImageData(imageData, 0, 0);
+                    resolve(canvas);
+                };
+
+                img.onerror = reject;
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        // Apply CMYK+ Adjustments to image (for printing)
+        function applyCMYKAdjustments(file, cyan, magenta, yellow, key, blackLevel, exposure, contrast) {
+            return new Promise((resolve, reject) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+
+                img.onload = function() {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Get image data
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = imageData.data;
+                    
+                    // Apply CMYK+ Adjustments
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = data[i];
+                        const g = data[i + 1];
+                        const b = data[i + 2];
+                        
+                        // Convert RGB to CMYK
+                        const k = Math.min(1 - r/255, 1 - g/255, 1 - b/255);
+                        let c = (1 - r/255 - k) / (1 - k) || 0;
+                        let m = (1 - g/255 - k) / (1 - k) || 0;
+                        let y = (1 - b/255 - k) / (1 - k) || 0;
+                        
+                        // Apply adjustments
+                        c = Math.max(0, Math.min(1, c + cyan/100));
+                        m = Math.max(0, Math.min(1, m + magenta/100));
+                        y = Math.max(0, Math.min(1, y + yellow/100));
+                        const adjustedK = Math.max(0, Math.min(1, k + key/100));
+                        
+                        // Convert back to RGB
+                        let newR = 255 * (1 - c) * (1 - adjustedK);
+                        let newG = 255 * (1 - m) * (1 - adjustedK);
+                        let newB = 255 * (1 - y) * (1 - adjustedK);
+                        
+                        // Apply exposure and black level adjustments
+                        const exposureFactor = exposure / 100; // -100..+100 to -1..+1
+                        newR = newR + (255 * exposureFactor);
+                        newG = newG + (255 * exposureFactor);
+                        newB = newB + (255 * exposureFactor);
+                        
+                        // Apply black level (adjust shadows)
+                        const blackLevelFactor = blackLevel / 100; // -100..+100 to -1..+1
+                        if (blackLevelFactor > 0) {
+                            // Lift shadows
+                            newR = newR + (blackLevelFactor * (255 - newR) * (1 - newR/255));
+                            newG = newG + (blackLevelFactor * (255 - newG) * (1 - newG/255));
+                            newB = newB + (blackLevelFactor * (255 - newB) * (1 - newB/255));
+                        } else {
+                            // Lower shadows  
+                            newR = newR + (blackLevelFactor * newR);
+                            newG = newG + (blackLevelFactor * newG);
+                            newB = newB + (blackLevelFactor * newB);
+                        }
+                        
+                        // Apply contrast after all other adjustments
+                        const contrastFactor = (contrast + 100) / 100; // Convert -100..+100 to 0..2
+                        newR = ((newR - 128) * contrastFactor) + 128;
+                        newG = ((newG - 128) * contrastFactor) + 128;
+                        newB = ((newB - 128) * contrastFactor) + 128;
+                        
+                        data[i] = Math.round(Math.max(0, Math.min(255, newR)));
+                        data[i + 1] = Math.round(Math.max(0, Math.min(255, newG)));
+                        data[i + 2] = Math.round(Math.max(0, Math.min(255, newB)));
+                    }
+                    
+                    // Put the adjusted image data back
+                    ctx.putImageData(imageData, 0, 0);
+                    
+                    canvas.toBlob(function(blob) {
+                        const adjustedFile = new File([blob], file.name.replace(/\.[^/.]+$/, '_adjusted.jpg'), {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        resolve(adjustedFile);
+                    }, 'image/jpeg', 0.9);
+                };
+
+                img.onerror = reject;
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        // Convert image to JPEG if needed
+        function convertToJpeg(file) {
+            return new Promise((resolve, reject) => {
+                if (file.type === 'image/jpeg') {
+                    resolve(file);
+                    return;
+                }
+
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+
+                img.onload = function() {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    
+                    canvas.toBlob(function(blob) {
+                        const jpegFile = new File([blob], file.name.replace(/\.[^/.]+$/, '.jpg'), {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        resolve(jpegFile);
+                    }, 'image/jpeg', 0.9);
+                };
+
+                img.onerror = reject;
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        // Print function
+        async function printImage(printerIp, imageFile, mode, cut, cmykAdjustments) {
+            try {
+                showStatus('Preparing image for printing...', 'info');
+                
+                // Convert image to JPEG if needed
+                let processedFile = await convertToJpeg(imageFile);
+                
+                // Apply CMYK+ Adjustments if any are set
+                const hasAdjustments = cmykAdjustments.cyan !== 0 || cmykAdjustments.magenta !== 0 || 
+                                     cmykAdjustments.yellow !== 0 || cmykAdjustments.key !== 0 || cmykAdjustments.blackLevel !== 0 || cmykAdjustments.exposure !== 0 || cmykAdjustments.contrast !== 0;
+                
+                if (hasAdjustments) {
+                    showStatus('Applying CMYK color adjustments...', 'info');
+                    processedFile = await applyCMYKAdjustments(
+                        processedFile, 
+                        cmykAdjustments.cyan, 
+                        cmykAdjustments.magenta, 
+                        cmykAdjustments.yellow, 
+                        cmykAdjustments.key,
+                        cmykAdjustments.blackLevel,
+                        cmykAdjustments.exposure,
+                        cmykAdjustments.contrast
+                    );
+                }
+                
+                // Create form data
+                const formData = new FormData();
+                formData.append('image', processedFile);
+                formData.append('printer_ip', printerIp);
+                formData.append('mode', mode);
+                formData.append('cut', cut);
+
+                showStatus('Connecting to printer...', 'info');
+
+                // Send to local bridge server
+                const response = await fetch('http://localhost:8080/print', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showStatus('✅ Print job sent successfully!', 'success');
+                    // Update paper status after printing
+                    setTimeout(fetchPrinterStatus, 2000);
+                } else {
+                    throw new Error(result.error || 'Unknown printing error');
+                }
+
+            } catch (error) {
+                console.error('Print error:', error);
+                if (error.message.includes('Failed to fetch')) {
+                    showStatus('❌ Error: Bridge server not reachable. Please start the bridge server with "python bridge_server.py"', 'error');
+                } else {
+                    showStatus(`❌ Print error: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        // Form submit handler
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const printerIpValue = printerIp.value;
+            const file = imageFile.files[0];
+            const mode = document.getElementById('printMode').value;
+            const cut = document.getElementById('cutMode').value;
+            
+            // Always use normal CMYK+ settings for printing (ZINK settings are only for preview)
+            const normalPrefix = 'normal_';
+            const cmykAdjustments = {
+                cyan: parseInt(getSetting(normalPrefix + 'cyan_value') || '0'),
+                magenta: parseInt(getSetting(normalPrefix + 'magenta_value') || '0'),
+                yellow: parseInt(getSetting(normalPrefix + 'yellow_value') || '0'),
+                key: parseInt(getSetting(normalPrefix + 'key_value') || '0'),
+                blackLevel: parseInt(getSetting(normalPrefix + 'black_level') || '0'),
+                exposure: parseInt(getSetting(normalPrefix + 'exposure') || '0'),
+                contrast: parseInt(getSetting(normalPrefix + 'contrast') || '0')
+            };
+            
+            // If we're currently in normal mode, use current slider values
+            if (!isZinkMode) {
+                cmykAdjustments.cyan = parseInt(cyanSlider.value);
+                cmykAdjustments.magenta = parseInt(magentaSlider.value);
+                cmykAdjustments.yellow = parseInt(yellowSlider.value);
+                cmykAdjustments.key = parseInt(keySlider.value);
+                cmykAdjustments.blackLevel = parseInt(blackLevelSlider.value);
+                cmykAdjustments.exposure = parseInt(exposureSlider.value);
+                cmykAdjustments.contrast = parseInt(contrastSlider.value);
+            }
+
+            if (!file) {
+                showStatus('❌ Please select an image.', 'error');
+                return;
+            }
+
+            if (!printerIpValue) {
+                showStatus('❌ Please enter the printer IP address.', 'error');
+                return;
+            }
+
+            printButton.disabled = true;
+            printButton.textContent = '🔄 Printing...';
+
+            try {
+                await printImage(printerIpValue, file, mode, cut, cmykAdjustments);
+            } finally {
+                printButton.disabled = false;
+                printButton.textContent = '🖨️ Print';
+            }
+        });
+
+        // Initialize on page load
+        window.addEventListener('load', async function() {
+            // Load saved settings first
+            loadSettings();
+            
+            try {
+                const response = await fetch('http://localhost:8080/status');
+                if (response.ok) {
+                    showStatus('✅ Bridge server connected and ready.', 'success');
+                    
+                    // Start automatic status updates if IP is saved
+                    const savedIP = printerIp.value;
+                    if (savedIP) {
+                        startStatusUpdates();
+                    }
+                }
+            } catch (error) {
+                showStatus('⚠️ Bridge server not reachable. Please start "python bridge_server.py" to use the printer.', 'error');
+            }
+        });
+
+        // Stop status updates when page is closed
+        window.addEventListener('beforeunload', function() {
+            stopStatusUpdates();
+        });
+    </script>
+</body>
+</html> 
