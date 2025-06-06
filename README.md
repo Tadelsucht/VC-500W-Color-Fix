@@ -164,6 +164,9 @@ See [LICENSE](LICENSE) file for full license text.
 - labelprinter-vc500w by [lenchan139](https://gitlab.com/lenchan139/labelprinter-vc500w/-/tree/master?ref_type=heads)
 - Brother for the VC-500W printer
 
+## Screenshot
+![alt text](screenshot.png)
+
 ---
 
 **Note**: This is an unofficial tool and is not affiliated with or endorsed by Brother Industries, Ltd.
