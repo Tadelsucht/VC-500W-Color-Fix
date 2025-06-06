@@ -41,7 +41,7 @@ A modern web-based color correction and printing interface for the Brother VC-50
 1. **Clone or download this repository**
    ```bash
    git clone https://github.com/Tadelsucht/VC500W-ColorFix.git
-   cd VC500W-ColorFix
+   cd C-500W-Color-Fix
    ```
 
 2. **Install Python dependencies**
