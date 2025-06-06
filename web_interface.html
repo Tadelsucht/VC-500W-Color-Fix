@@ -661,22 +661,22 @@
                 cyanSlider.value = cyanVal;
             } else if (isZinkMode) {
                 // Set default ZINK values
-                cyanSlider.value = 20;
-                magentaSlider.value = 10;
+                cyanSlider.value = 5;
+                magentaSlider.value = 0;
                 yellowSlider.value = -20;
-                keySlider.value = 10;
-                blackLevelSlider.value = -10;
-                exposureSlider.value = 10;
-                contrastSlider.value = 0;
+                keySlider.value = 0;
+                blackLevelSlider.value = -5;
+                exposureSlider.value = 5;
+                contrastSlider.value = 30;
             } else {
                 // Reset to defaults for normal mode
-                cyanSlider.value = 0;
-                magentaSlider.value = 0;
-                yellowSlider.value = 0;
-                keySlider.value = 0;
-                blackLevelSlider.value = 0;
-                exposureSlider.value = 0;
-                contrastSlider.value = 0;
+                cyanSlider.value = -3;
+                magentaSlider.value = 3;
+                yellowSlider.value = 28;
+                keySlider.value = 6;
+                blackLevelSlider.value = -7;
+                exposureSlider.value = 11;
+                contrastSlider.value = 13;
             }
 
             const magentaVal = getSetting(prefix + 'magenta_value');

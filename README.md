@@ -79,15 +79,6 @@ A modern web-based color correction and printing interface for the Brother VC-50
 - **☀️ Exposure**: Overall brightness adjustment like camera exposure
 - **🔆 Contrast**: Enhance (positive) or reduce (negative) contrast around midtones
 
-### ZINK Paper Corrections
-The ZINK preview applies these automatic corrections optimized for ZINK paper:
-- Cyan: +20 (compensate for ZINK's cyan deficiency)
-- Magenta: +10 (slight magenta boost)
-- Yellow: -20 (reduce ZINK's yellow cast)
-- Key: +10 (enhance blacks)
-- Black Level: -10 (deeper shadows)
-- Exposure: +10 (ZINK-optimized brightness boost)
-
 ## 🏗️ Technical Architecture
 
 ### Components
